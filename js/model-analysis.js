@@ -417,7 +417,9 @@ function buildTierOptions(selectedModel, sourceModel) {
 }
 
 function getModelKey(name) {
-  return normalizeModelName(name);
+  const modelName = String(name || '').trim();
+  const isAuto = /^Auto:\s*/i.test(modelName);
+  return `${isAuto ? 'auto' : 'direct'}:${normalizeModelName(modelName)}`;
 }
 
 function tierClass(tier) {
