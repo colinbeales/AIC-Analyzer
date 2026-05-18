@@ -2,7 +2,7 @@
 
 A browser-based tool for making sense of your GitHub Copilot AI credit spend. Drop in your Copilot Usage Data CSV, instantly see who's spending what and on which models, then get data-driven per-user budget recommendations — no installation, no sign-in, no data leaves your machine.
 
-**[→ Open the app]()**
+**[→ Open the app](https://colinbeales.github.io/AIC-Analyzer/)**
 
 Pricing is estimated based on pricing from 19 May 2026.
 
@@ -88,7 +88,7 @@ For full details see the [GitHub documentation on downloading the usage report](
 
 #### From GitHub
 
-**[→ Open the app](https://legendary-guacamole-2ql774v.pages.github.io/)**
+**[→ Open the app](hhttps://colinbeales.github.io/AIC-Analyzer/)**
 
 #### Local
 
