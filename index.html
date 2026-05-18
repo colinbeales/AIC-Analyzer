@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Credits Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell" id="app-shell">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <svg class="brand-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#2563eb"/>
+          <path d="M6 22l5-7 4 4 5-8 6 7" stroke="#fff" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">AIC Analyzer</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Pages">
+      <a class="nav-item active" data-page="model-analysis" href="#"
+         role="button" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" aria-hidden="true">
+          <rect x="3" y="12" width="4" height="9" rx="1"/>
+          <rect x="10" y="8" width="4" height="13" rx="1"/>
+          <rect x="17" y="4" width="4" height="17" rx="1"/>
+        </svg>
+        <span class="nav-label">Model Analysis</span>
+      </a>
+      <a class="nav-item" data-page="budget-analysis" href="#" role="button">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" aria-hidden="true">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path stroke-linecap="round" d="M2 11h20"/>
+          <path stroke-linecap="round" d="M6 15.5h.01M10 15.5h5"/>
+          <path stroke-linecap="round" d="M7 3l5 4 5-4"/>
+        </svg>
+        <span class="nav-label">Budget Analysis</span>
+      </a>
+    </nav>
+
+    <button class="sidebar-collapse-btn" id="sidebar-toggle"
+            aria-label="Collapse sidebar" aria-expanded="true">
+      <svg class="collapse-chevron" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+  </aside>
+
+  <!-- Mobile backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+  <!-- ── Main Content ──────────────────────────────────────────────── -->
+  <div class="main-content" id="main-content">
+
+    <!-- Mobile header -->
+    <div class="mobile-header">
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation"
+              aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             aria-hidden="true">
+          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <span class="mobile-brand">AIC Analyzer</span>
+    </div>
+
+    <!-- ══ Model Analysis Page ═══════════════════════════════════════ -->
+    <div id="model-analysis-page" class="page">
+
+      <!-- Upload View -->
+      <div id="upload-view" class="view">
+        <div class="upload-container">
+          <div class="upload-hero">
+            <svg class="upload-logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <rect width="48" height="48" rx="12" fill="#2563eb"/>
+              <path d="M24 14v14M18 22l6-8 6 8" stroke="#fff" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="14" y="30" width="20" height="4" rx="2" fill="#fff" opacity=".5"/>
+            </svg>
+            <h1>AI Credits Analyzer</h1>
+            <p class="upload-subtitle">Upload your GitHub Copilot billing CSV to identify your
+              highest AI-credit consumers and plan budgets.</p>
+          </div>
+          <label id="drop-zone" class="drop-zone" for="file-input"
+                 role="button" tabindex="0" aria-label="Upload CSV file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.632-8.697
+                       3.75 3.75 0 0 1 7.364-1.5A4.5 4.5 0 1 1 17.25 19.5H6.75Z"/>
+            </svg>
+            <span class="drop-label">Drop your CSV here</span>
+            <span class="drop-sub">or click to browse</span>
+            <input type="file" id="file-input" accept=".csv" aria-label="Choose CSV file" />
+          </label>
+          <div id="upload-error" class="upload-error hidden" role="alert"></div>
+          <p class="upload-hint">
+            Expected format: GitHub Copilot premium-request usage export
+            (<code>aic_gross_amount</code> column required).
+          </p>
+        </div>
+      </div><!-- /upload-view -->
+
+      <!-- Dashboard View -->
+      <div id="dashboard-view" class="view hidden">
+        <header class="dash-header">
+          <div class="dash-header-inner">
+            <div class="dash-title-group">
+              <h1 id="dash-title">AI Credits — Top 100% Analysis</h1>
+              <p id="dash-subtitle" class="dash-subtitle"></p>
+            </div>
+            <button id="new-file-btn" class="btn-outline"
+                    aria-label="Upload a new CSV file">↑ Upload new file</button>
+          </div>
+          <div id="meta-bar" class="meta-bar"></div>
+        </header>
+
+        <section class="pct-section" aria-label="Percentile selector">
+          <div class="pct-inner">
+            <span class="pct-label">Show top:</span>
+            <div class="pct-buttons" role="group" aria-label="Percentile options">
+              <button class="pct-btn active" data-pct="100" aria-pressed="true">Top 100%</button>
+              <button class="pct-btn" data-pct="50" aria-pressed="false">Top 50%</button>
+                    <button class="pct-btn" data-pct="25" aria-pressed="false">Top 25%</button>
+                    <button class="pct-btn" data-pct="10" aria-pressed="false">Top 10%</button>
+                    <button class="pct-btn" data-pct="5"  aria-pressed="false">Top 5%</button>
+                    <button class="pct-btn" data-pct="1"  aria-pressed="false">Top 1%</button>
+              <button class="pct-btn pct-custom-btn" data-pct="custom"
+                      aria-pressed="false">Custom</button>
+            </div>
+            <div id="custom-pct-wrap" class="custom-pct-wrap hidden">
+              <label for="custom-pct-input" class="sr-only">Custom percentage</label>
+              <input id="custom-pct-input" type="number" min="0.1" max="100" step="0.1"
+                     placeholder="e.g. 2.5" class="custom-pct-input" />
+              <span class="custom-pct-unit">%</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="kpi-section" aria-label="Key metrics">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-label">USERS IN GROUP</span>
+              <span id="kpi-users" class="kpi-value">—</span>
+              <span id="kpi-users-sub" class="kpi-sub"></span>
+            </div>
+            <div class="kpi-card kpi-card--accent">
+              <span class="kpi-label">TOTAL AI CREDITS</span>
+              <span id="kpi-total" class="kpi-value">—</span>
+              <span class="kpi-sub">combined spend</span>
+            </div>
+            <div class="kpi-card kpi-card--accent">
+              <span class="kpi-label">SHARE OF TOTAL</span>
+              <span id="kpi-share" class="kpi-value">—</span>
+              <span id="kpi-share-sub" class="kpi-sub"></span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">AVG PER USER</span>
+              <span id="kpi-avg" class="kpi-value">—</span>
+              <span class="kpi-sub">AI credits</span>
+            </div>
+            <div class="kpi-card kpi-card--auto">
+              <span class="kpi-label">AUTO: MODE</span>
+              <span id="kpi-auto" class="kpi-value">—</span>
+              <span class="kpi-sub">of group spend</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="spend-bar-section" aria-label="Spend share visualisation">
+          <div class="spend-bar-track" role="progressbar"
+               aria-valuemin="0" aria-valuemax="100"
+               id="spend-bar-track" aria-valuenow="0"
+               aria-label="Group share of total spend">
+            <div id="spend-bar-fill" class="spend-bar-fill"></div>
+          </div>
+          <p id="spend-bar-label" class="spend-bar-label"></p>
+        </section>
+
+        <section class="model-section" aria-label="Model breakdown">
+          <h2 class="section-title">Model Breakdown</h2>
+          <div id="model-list" class="model-list"></div>
+        </section>
+
+        <section class="substitution-section" aria-label="Model substitution simulator">
+          <h2 class="section-title">Model Substitution Simulator</h2>
+          <p class="substitution-note">
+            For each currently used model, shift any percentage to one or more replacement models.
+            Any unallocated percentage remains on the original model.
+          </p>
+          <div class="sub-cache-write-control">
+            <label for="cache-write-pct-input" class="sub-cache-write-label">Anthropic cache-write share (when CSV does not split cached reads/writes)</label>
+            <div class="sub-cache-write-input-wrap">
+              <input id="cache-write-pct-input" class="sub-cache-write-input" type="number" min="0" max="100" step="1" value="20" inputmode="numeric" aria-label="Anthropic cache write percentage" />
+              <span class="sub-cache-write-unit">%</span>
+            </div>
+          </div>
+
+          <div id="sub-category-legend" class="sub-category-legend" aria-label="Model categories"></div>
+
+          <div id="sub-model-list" class="sub-model-list"></div>
+
+          <div id="sub-results" class="sub-results"></div>
+        </section>
+      </div><!-- /dashboard-view -->
+
+    </div><!-- /model-analysis-page -->
+
+    <!-- ══ Budget Analysis Page ══════════════════════════════════════ -->
+    <div id="budget-analysis-page" class="page hidden">
+
+      <header class="dash-header">
+        <div class="dash-header-inner">
+          <div class="dash-title-group">
+            <h1>Budget Analysis</h1>
+            <p class="dash-subtitle">Define spending tiers and get per-user budget recommendations</p>
+          </div>
+        </div>
+        <div id="budget-meta-bar" class="meta-bar"></div>
+      </header>
+
+      <!-- No data state -->
+      <div id="budget-no-data" class="empty-page-state hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.25" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21
+                   18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+        </svg>
+        <h2>No data loaded</h2>
+        <p>Upload a billing CSV in Model Analysis first, then return here.</p>
+        <button class="btn-primary" id="budget-go-upload">Go to Model Analysis</button>
+      </div>
+
+      <!-- Budget config + results -->
+      <div id="budget-content" class="hidden">
+
+        <!-- ── Step 1: Licences & Spend ──────────────────────────── -->
+        <div class="step-block">
+          <div class="step-header">
+            <span class="step-badge">1</span>
+            <div class="step-title-group">
+              <h2 class="step-title">Licences &amp; Spend</h2>
+              <span class="step-desc">Enter your seat counts, any negotiated discount, and pricing period.</span>
+            </div>
+          </div>
+
+          <!-- Licence & Discount -->
+          <section class="licence-section">
+            <div class="licence-grid">
+
+              <!-- Seats card -->
+              <div class="config-card">
+                <h3 class="config-card-title">Copilot Licence Seats</h3>
+                <div class="seat-rows">
+                  <div class="seat-row">
+                    <div class="seat-label">
+                      <span class="seat-name">Copilot for Business</span>
+                      <span class="seat-rate">$19 included AI credits / seat / month</span>
+                    </div>
+                    <input type="number" id="biz-seats-input" class="seats-input"
+                           min="0" step="1" value="0"
+                           aria-label="Copilot for Business seat count" />
+                    <span class="seat-result" id="biz-pool-label">= $0</span>
+                  </div>
+                  <div class="seat-row">
+                    <div class="seat-label">
+                      <span class="seat-name">Copilot Enterprise</span>
+                      <span class="seat-rate">$39 included AI credits / seat / month</span>
+                    </div>
+                    <input type="number" id="ent-seats-input" class="seats-input"
+                           min="0" step="1" value="0"
+                           aria-label="Copilot Enterprise seat count" />
+                    <span class="seat-result" id="ent-pool-label">= $0</span>
+                  </div>
+                </div>
+                <p class="seat-note">
+                  ⓘ The number of users in the CSV may differ from your licenced seats
+                  where users haven't used Copilot in the reporting period.
+                </p>
+              </div>
+
+              <!-- Discount card -->
+              <div class="config-card config-card--narrow">
+                <h3 class="config-card-title">Negotiated Discount</h3>
+                <div class="discount-row">
+                  <input type="number" id="discount-input" class="discount-input"
+                         min="0" max="100" step="0.1" value="0"
+                         aria-label="Negotiated discount percentage" />
+                  <span class="discount-unit">%</span>
+                </div>
+                <p class="discount-note">
+                  Reflect actual spend with discounts where applicable.
+                </p>
+                <div id="discount-badge" class="discount-badge hidden"></div>
+              </div>
+
+              <!-- Promotional pricing card -->
+              <div class="config-card config-card--narrow">
+                <h3 class="config-card-title">Promotional Pricing</h3>
+                <label class="promo-toggle-label" for="promo-toggle">
+                  <span class="promo-toggle-wrapper">
+                    <input type="checkbox" id="promo-toggle" checked
+                           aria-label="Enable promotional pricing (June to August)" />
+                    <span class="promo-toggle-track" aria-hidden="true">
+                      <span class="promo-toggle-thumb"></span>
+                    </span>
+                  </span>
+                  <span class="promo-toggle-text">June – August</span>
+                </label>
+                <div id="promo-rates" class="promo-rates">
+                  <div class="promo-rate-row">
+                    <span class="promo-product">Copilot for Business</span>
+                    <span class="promo-value">3,000 AIC <span class="promo-dollar">($30/seat/mo)</span></span>
+                  </div>
+                  <div class="promo-rate-row">
+                    <span class="promo-product">Copilot Enterprise</span>
+                    <span class="promo-value">7,000 AIC <span class="promo-dollar">($70/seat/mo)</span></span>
+                  </div>
+                </div>
+                <div id="promo-off-note" class="promo-off-note hidden">
+                  Standard rates apply: $19 / $39 per seat per month.
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Pool summary + chart -->
+          <section class="pool-section">
+            <div id="pool-summary" class="pool-summary"></div>
+            <div class="pool-chart-container">
+              <canvas id="pool-chart" aria-label="Cumulative AI credit spend vs included credits pool"></canvas>
+            </div>
+          </section>
+
+        </div><!-- /step-block 1 -->
+
+        <!-- ── Step 2: Power User Tiers ──────────────────────────── -->
+        <div class="step-block">
+          <div class="step-header">
+            <span class="step-badge">2</span>
+            <div class="step-title-group">
+              <h2 class="step-title">Power User Tiers</h2>
+              <span class="step-desc">Define how many tiers of high-spend users you want and set their percentile cutoffs.</span>
+            </div>
+          </div>
+
+          <section class="budget-config-section">
+            <div class="config-block">
+              <p class="config-desc">How many tiers of high-spend users do you want?</p>
+              <div class="tier-count-group" role="group"
+                   aria-label="Number of power user tiers">
+                <button class="tier-count-btn active" data-count="1"
+                        aria-pressed="true">1</button>
+                <button class="tier-count-btn" data-count="2"
+                        aria-pressed="false">2</button>
+                <button class="tier-count-btn" data-count="3"
+                        aria-pressed="false">3</button>
+                <button class="tier-count-btn" data-count="4"
+                        aria-pressed="false">4</button>
+                <button class="tier-count-btn" data-count="5"
+                        aria-pressed="false">5</button>
+              </div>
+            </div>
+
+            <div id="budget-tiers-container" class="budget-tiers-container"></div>
+
+            <p class="config-hint">
+              Tiers are ordered from highest to lowest spenders. Tier 1 covers the top
+              X% of users; each subsequent tier covers the next band down.
+              Everyone below all tiers receives the Universal User budget.
+            </p>
+          </section>
+
+        </div><!-- /step-block 2 -->
+
+        <!-- ── Budget Recommendations (results) ──────────────────── -->
+        <section class="budget-results-section">
+          <h2 class="section-title">Budget Recommendations</h2>
+          <div id="budget-results"></div>
+        </section>
+
+      </div><!-- /budget-content -->
+
+    </div><!-- /budget-analysis-page -->
+
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+  <!-- ══ Band Model Use Modal ═════════════════════════════════════ -->
+  <div id="band-model-modal" class="band-modal-overlay hidden"
+       role="dialog" aria-modal="true" aria-labelledby="band-modal-title">
+    <div class="band-modal">
+      <div class="band-modal-header">
+        <div class="band-modal-title-group">
+          <h2 id="band-modal-title" class="band-modal-title"></h2>
+          <span id="band-modal-subtitle" class="band-modal-subtitle"></span>
+        </div>
+        <button id="band-modal-close" class="band-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div id="band-modal-kpis" class="band-modal-kpis"></div>
+      <div class="band-modal-body">
+        <h3 class="section-title">Model Breakdown</h3>
+        <div id="band-modal-model-list" class="model-list"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/model-analysis.js"></script>
+<script src="js/data.js"></script>
+<script src="js/budget-modal.js"></script>
+<script src="js/budget-analysis.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
