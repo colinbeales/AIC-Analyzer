@@ -448,6 +448,18 @@ body {
 .substitution-note {
   font-size: .825rem;
   color: var(--text-muted);
+  margin-bottom: .45rem;
+}
+
+.substitution-section .section-title {
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.substitution-warning {
+  font-size: .825rem;
+  color: #b91c1c;
+  font-weight: 600;
   margin-bottom: .85rem;
 }
 
