@@ -5,6 +5,18 @@ function formatDollars(value) {
   return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function parseReportNumber(value) {
+  const number = parseFloat(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function rowSpendAmount(row) {
+  const grossAmount = parseReportNumber(row?.gross_amount);
+  if (grossAmount !== null) return grossAmount;
+
+  return 0;
+}
+
 function fmtPct(p) {
   return `${p}%`;
 }

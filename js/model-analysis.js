@@ -92,19 +92,7 @@ function isRequestUsageRecord(row) {
 }
 
 function metricQuantityForRow(row) {
-  const date = String(row?.date || '').trim();
-  const totalMonthlyQuota = parseFloat(row?.total_monthly_quota);
-  const aicQty = parseFloat(row?.aic_quantity);
   const rawQty = parseFloat(row?.quantity);
-
-  if (
-    isAprilBackfillDate(date) &&
-    (Number.isFinite(totalMonthlyQuota) ? totalMonthlyQuota : 0) === 0 &&
-    isRequestUsageRecord(row) &&
-    Number.isFinite(aicQty)
-  ) {
-    return aicQty;
-  }
 
   return Number.isFinite(rawQty) ? rawQty : 0;
 }
@@ -305,7 +293,7 @@ function computeMetrics(pct) {
     const username = (row.username || '').trim();
     if (!topSet.has(username)) continue;
     const model  = (row.model || 'Unknown').trim();
-    const amount = parseFloat(row.aic_gross_amount) || 0;
+    const amount = rowSpendAmount(row);
     const qty = metricQuantityForRow(row);
     modelMap.set(model, (modelMap.get(model) || 0) + amount);
     countMap.set(model, (countMap.get(model) || 0) + qty);

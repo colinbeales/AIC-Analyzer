@@ -73,12 +73,12 @@ GitHub generates the billing CSV asynchronously and emails it to you as an admin
 
 Alternatively you can request the report directly from the **premium request analytics page** or via the GitHub API.
 
-The report contains one row per user, per model, per day and includes the two columns this tool uses:
+The report contains one row per user, per model, per day and includes the spend and quantity columns this tool uses:
 
 | Column | Description |
 |---|---|
-| `aic_gross_amount` | Estimated cost in USD under usage-based billing |
-| `aic_quantity` | Number of AI credits consumed |
+| `gross_amount` | Estimated cost in USD under usage-based billing |
+| `quantity` | Number of billable units in the report |
 
 For full details see the [GitHub documentation on downloading the usage report](https://docs.github.com/en/copilot/how-tos/manage-and-track-spending/prepare-for-usage-based-billing#download-the-usage-report).
 

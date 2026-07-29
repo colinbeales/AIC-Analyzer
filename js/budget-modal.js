@@ -17,8 +17,8 @@ function computeModelMetricsForUsers(usernameSet) {
     const username = (row.username || '').trim();
     if (!usernameSet.has(username)) continue;
     const model  = (row.model || 'Unknown').trim();
-    const amount = parseFloat(row.aic_gross_amount) || 0;
-    const qty    = parseFloat(row.quantity) || 0;
+    const amount = rowSpendAmount(row);
+    const qty    = metricQuantityForRow(row);
     modelMap.set(model, (modelMap.get(model) || 0) + amount);
     countMap.set(model, (countMap.get(model) || 0) + qty);
     groupSpend += amount;

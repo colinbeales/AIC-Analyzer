@@ -49,7 +49,7 @@ function aggregateData() {
 
   for (const row of state.parsedRows) {
     const username = (row.username || '').trim();
-    const amount   = parseFloat(row.aic_gross_amount) || 0;
+    const amount   = rowSpendAmount(row);
     const date     = (row.date || '').trim();
     if (!username) continue;
     state.userSpendMap.set(username, (state.userSpendMap.get(username) || 0) + amount);
@@ -77,8 +77,8 @@ function handleFile(file) {
     complete: results => {
       let rows = results.data;
       if (!rows.length) { showError('The CSV appears to be empty.'); return; }
-      if (!('aic_gross_amount' in rows[0])) {
-        showError('Could not find an "aic_gross_amount" column. Is this a GitHub Copilot billing export?');
+      if (!('gross_amount' in rows[0])) {
+        showError('Could not find a "gross_amount" column. Is this a GitHub Copilot billing export?');
         return;
       }
 
@@ -106,15 +106,16 @@ function handleFile(file) {
         if (!isAprilBackfillDate(date)) return row;
         const totalMonthlyQuota = parseFloat(row.total_monthly_quota) || 0;
         if (totalMonthlyQuota === 0 && isRequestUsageRecord(row)) {
-          // Halve aic_quantity and aic_gross_amount, zero out others
+          const halveNumberString = value => {
+            const number = parseReportNumber(value);
+            return number === null ? value : (number * 0.5).toString();
+          };
           return {
             ...row,
-            quantity: 0,
-            gross_amount: 0,
-            discount_amount: 0,
-            net_amount: 0,
-            aic_quantity: row.aic_quantity ? (parseFloat(row.aic_quantity) * 0.5).toString() : row.aic_quantity,
-            aic_gross_amount: row.aic_gross_amount ? (parseFloat(row.aic_gross_amount) * 0.5).toString() : row.aic_gross_amount,
+            quantity: halveNumberString(row.quantity),
+            gross_amount: halveNumberString(row.gross_amount),
+            discount_amount: halveNumberString(row.discount_amount),
+            net_amount: halveNumberString(row.net_amount),
           };
         }
         return row;
