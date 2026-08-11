@@ -28,28 +28,35 @@ const customWrap    = document.getElementById('custom-pct-wrap');
 const customInput   = document.getElementById('custom-pct-input');
 
 const MODEL_PRICING = [
-  { model: 'GPT-4.1', provider: 'OpenAI', category: 'Versatile', aic: 2.00, input: 2.00, cache: 0.50, cacheWrite: null, output: 8.00 },
   { model: 'GPT-5 mini', provider: 'OpenAI', category: 'Lightweight', aic: 0.25, input: 0.25, cache: 0.025, cacheWrite: null, output: 2.00 },
-  { model: 'GPT-5.2', provider: 'OpenAI', category: 'Versatile', aic: 1.75, input: 1.75, cache: 0.175, cacheWrite: null, output: 14.00 },
-  { model: 'GPT-5.2-Codex', provider: 'OpenAI', category: 'Powerful', aic: 1.75, input: 1.75, cache: 0.175, cacheWrite: null, output: 14.00 },
   { model: 'GPT-5.3-Codex', provider: 'OpenAI', category: 'Powerful', aic: 1.75, input: 1.75, cache: 0.175, cacheWrite: null, output: 14.00 },
   { model: 'GPT-5.4', provider: 'OpenAI', category: 'Versatile', aic: 2.50, input: 2.50, cache: 0.25, cacheWrite: null, output: 15.00 },
   { model: 'GPT-5.4 mini', provider: 'OpenAI', category: 'Lightweight', aic: 0.75, input: 0.75, cache: 0.075, cacheWrite: null, output: 4.50 },
   { model: 'GPT-5.4 nano', provider: 'OpenAI', category: 'Lightweight', aic: 0.20, input: 0.20, cache: 0.02, cacheWrite: null, output: 1.25 },
   { model: 'GPT-5.5', provider: 'OpenAI', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: null, output: 30.00 },
+  { model: 'GPT-5.6 Luna', provider: 'OpenAI', category: 'Lightweight', aic: 0.20, input: 0.20, cache: 0.02, cacheWrite: 0.25, output: 1.20 },
+  { model: 'GPT-5.6 Sol', provider: 'OpenAI', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 30.00 },
+  { model: 'GPT-5.6 Terra', provider: 'OpenAI', category: 'Versatile', aic: 2.00, input: 2.00, cache: 0.20, cacheWrite: 2.50, output: 12.00 },
   { model: 'Claude Haiku 4.5', provider: 'Anthropic', category: 'Versatile', aic: 1.00, input: 1.00, cache: 0.10, cacheWrite: 1.25, output: 5.00 },
   { model: 'Claude Sonnet 4', provider: 'Anthropic', category: 'Versatile', aic: 3.00, input: 3.00, cache: 0.30, cacheWrite: 3.75, output: 15.00 },
   { model: 'Claude Sonnet 4.5', provider: 'Anthropic', category: 'Versatile', aic: 3.00, input: 3.00, cache: 0.30, cacheWrite: 3.75, output: 15.00 },
   { model: 'Claude Sonnet 4.6', provider: 'Anthropic', category: 'Versatile', aic: 3.00, input: 3.00, cache: 0.30, cacheWrite: 3.75, output: 15.00 },
+  { model: 'Claude Sonnet 5', provider: 'Anthropic', category: 'Versatile', aic: 2.00, input: 2.00, cache: 0.20, cacheWrite: 2.50, output: 10.00 },
   { model: 'Claude Opus 4.5', provider: 'Anthropic', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 25.00 },
   { model: 'Claude Opus 4.6', provider: 'Anthropic', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 25.00 },
   { model: 'Claude Opus 4.7', provider: 'Anthropic', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 25.00 },
-  { model: 'Gemini 2.5 Pro', provider: 'Google', category: 'Powerful', aic: 1.25, input: 1.25, cache: 0.125, cacheWrite: null, output: 10.00 },
-  { model: 'Gemini 3 Flash', provider: 'Google', category: 'Lightweight', aic: 0.50, input: 0.50, cache: 0.05, cacheWrite: null, output: 3.00 },
+  { model: 'Claude Opus 4.8', provider: 'Anthropic', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 25.00 },
+  { model: 'Claude Opus 4.8 fast mode', provider: 'Anthropic', category: 'Powerful', aic: 10.00, input: 10.00, cache: 1.00, cacheWrite: 12.50, output: 50.00 },
+  { model: 'Claude Opus 5', provider: 'Anthropic', category: 'Powerful', aic: 5.00, input: 5.00, cache: 0.50, cacheWrite: 6.25, output: 25.00 },
+  { model: 'Claude Fable 5', provider: 'Anthropic', category: 'Powerful', aic: 10.00, input: 10.00, cache: 1.00, cacheWrite: 12.50, output: 50.00 },
   { model: 'Gemini 3.1 Pro', provider: 'Google', category: 'Powerful', aic: 2.00, input: 2.00, cache: 0.20, cacheWrite: null, output: 12.00 },
-  { model: 'Grok Code Fast 1', provider: 'xAI', category: 'Lightweight', aic: 0.20, input: 0.20, cache: 0.02, cacheWrite: null, output: 1.50 },
+  { model: 'Gemini 3.5 Flash', provider: 'Google', category: 'Lightweight', aic: 1.50, input: 1.50, cache: 0.15, cacheWrite: null, output: 9.00 },
+  { model: 'Gemini 3.6 Flash', provider: 'Google', category: 'Versatile', aic: 1.50, input: 1.50, cache: 0.15, cacheWrite: null, output: 7.50 },
+  { model: 'Grok 4.5', provider: 'xAI', category: 'Versatile', aic: 2.00, input: 2.00, cache: 0.50, cacheWrite: null, output: 6.00 },
+  { model: 'MAI-Code-1-Flash', provider: 'Microsoft', category: 'Lightweight', aic: 0.75, input: 0.75, cache: 0.075, cacheWrite: null, output: 4.50 },
   { model: 'Raptor mini', provider: 'GitHub', category: 'Versatile', aic: 0.25, input: 0.25, cache: 0.025, cacheWrite: null, output: 2.00 },
-  { model: 'Goldeneye', provider: 'GitHub', category: 'Powerful', aic: 1.25, input: 1.25, cache: 0.125, cacheWrite: null, output: 10.00 },
+  { model: 'Kimi K2.7 Code', provider: 'Moonshot AI', category: 'Versatile', aic: 0.95, input: 0.95, cache: 0.19, cacheWrite: null, output: 4.00 },
+  { model: 'Kimi K3', provider: 'Moonshot AI', category: 'Powerful', aic: 3.00, input: 3.00, cache: 0.30, cacheWrite: null, output: 15.00 },
 ];
 
 const DEFAULT_TOKEN_RATIO = { input: 60, cached: 10, cacheWrite: 0, output: 30 };
@@ -79,7 +86,9 @@ function inferProviderFromModelName(name) {
   if (normalized.startsWith('claude')) return 'Anthropic';
   if (normalized.startsWith('gemini')) return 'Google';
   if (normalized.startsWith('grok')) return 'xAI';
-  if (/raptor|goldeneye/.test(normalized)) return 'GitHub';
+  if (normalized.startsWith('mai-')) return 'Microsoft';
+  if (/raptor/.test(normalized)) return 'GitHub';
+  if (/kimi/.test(normalized)) return 'Moonshot AI';
   return 'Unknown provider';
 }
 

@@ -4,7 +4,7 @@ A browser-based tool for making sense of your GitHub Copilot AI credit spend. Dr
 
 **[→ Open the app](https://colinbeales.github.io/AIC-Analyzer/)**
 
-Pricing is estimated based on pricing from 19 May 2026.
+Pricing is estimated based on GitHub's models and pricing reference as of 11 August 2026.
 
 ---
 
@@ -75,10 +75,10 @@ Alternatively you can request the report directly from the **premium request ana
 
 The report contains one row per user, per model, per day and includes the spend and quantity columns this tool uses:
 
-| Column | Description |
-|---|---|
+| Column         | Description                                     |
+| -------------- | ----------------------------------------------- |
 | `gross_amount` | Estimated cost in USD under usage-based billing |
-| `quantity` | Number of billable units in the report |
+| `quantity`     | Number of billable units in the report          |
 
 For full details see the [GitHub documentation on downloading the usage report](https://docs.github.com/en/copilot/how-tos/manage-and-track-spending/prepare-for-usage-based-billing#download-the-usage-report).
 
